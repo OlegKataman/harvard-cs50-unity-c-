@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace june.lesson2_tue01
+namespace june.lessons
 {
     public sealed class HarryPotterLogic : MonoBehaviour
     {

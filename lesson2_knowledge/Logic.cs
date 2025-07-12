@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace june.lesson2_tue01
+namespace june.lessons
 {
     // Базовый класс для всех логических выражений
     public abstract class LogicalExpression
