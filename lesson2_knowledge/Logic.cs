@@ -28,6 +28,7 @@ namespace june.lessons
             {
                 throw new Exception($"Variable {Name} not in model");
             }
+
             return model[Name];
         }
 
@@ -40,6 +41,39 @@ namespace june.lessons
         {
             return Name;
         }
+    }
+
+    // Класс для предикатов (логика первого порядка)
+    public class Predicate : LogicalExpression
+    {
+        public string Name { get; }
+        public Symbol[] Arguments { get; }
+
+        public Predicate(string name, params Symbol[] args)
+        {
+            Name = name;
+            Arguments = args;
+        }
+
+        public override bool Evaluate(Dictionary<string, bool> model)
+        {
+            // Создаем ключ для предиката (например: "BelongsTo(Minerva,Gryffindor)")
+            string key = $"{Name}({string.Join(",", Arguments.Select(a => a.Name))})";
+            return model.TryGetValue(key, out bool value) && value;
+        }
+
+        public override HashSet<string> Symbols()
+        {
+            var symbols = new HashSet<string>();
+            foreach (var arg in Arguments)
+            {
+                symbols.UnionWith(arg.Symbols());
+            }
+
+            return symbols;
+        }
+
+        public override string ToString() => $"{Name}({string.Join(",", Arguments.Select(a => a.Name))})";
     }
 
     // Логическое "НЕ"
@@ -90,9 +124,10 @@ namespace june.lessons
             {
                 symbols.UnionWith(expr.Symbols());
             }
+
             return symbols;
         }
-        
+
         public override string ToString()
         {
             return $"({string.Join(" ∧ ", Expressions.Select(expr => expr.ToString()))})";
@@ -121,6 +156,7 @@ namespace june.lessons
             {
                 symbols.UnionWith(expr.Symbols());
             }
+
             return symbols;
         }
 
@@ -198,13 +234,13 @@ namespace june.lessons
         public static bool Check(LogicalExpression knowledge, LogicalExpression query)
         {
             var symbols = new HashSet<string>();
-                symbols.UnionWith(knowledge.Symbols());
-                symbols.UnionWith(query.Symbols());
+            symbols.UnionWith(knowledge.Symbols());
+            symbols.UnionWith(query.Symbols());
 
             return CheckAll(knowledge, query, symbols, new Dictionary<string, bool>());
         }
 
-        private static bool CheckAll(LogicalExpression knowledge, LogicalExpression query, 
+        private static bool CheckAll(LogicalExpression knowledge, LogicalExpression query,
             HashSet<string> symbols, Dictionary<string, bool> model)
         {
             if (symbols.Count == 0)
@@ -213,6 +249,7 @@ namespace june.lessons
                 {
                     return query.Evaluate(model);
                 }
+
                 return true;
             }
 
